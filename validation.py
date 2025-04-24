@@ -17,14 +17,18 @@ def is_valid_json(text: str) -> bool:
     except json.JSONDecodeError:
         return False
 
-# Load the schema once
+# oas_pipeline/validation.py
+import json
 from pathlib import Path
-_schema = json.loads(Path("openapi_3_0_3_schema.json").read_text(encoding="utf-8-sig"))
+
+_schema_path = Path(__file__).parent / "openapi_3_0_3_schema.json"
+_openapi_schema = json.loads(_schema_path.read_text(encoding="utf-8-sig"))
 
 def is_valid_oas(text: str) -> bool:
     try:
         candidate = json.loads(text)
-        jsonschema.validate(candidate, _schema)
+        jsonschema.validate(candidate, _openapi_schema)
         return True
     except Exception:
         return False
+
